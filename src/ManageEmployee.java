@@ -1,9 +1,8 @@
 import employee.EmployeeEntity;
+import employee.EmployeeInterceptor;
 import org.hibernate.*;
 import org.hibernate.cfg.Configuration;
 
-import javax.persistence.Table;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Iterator;
 import java.util.List;
 
@@ -32,7 +31,7 @@ public class ManageEmployee {
         me.updateEmp(8, 6000);
         me.updateEmp(9, 7000);
         me.updateEmp(10, 6000);
-        me.delEmp(12);
+        me.delEmp(16);
         me.listEmp();
 
 
@@ -40,6 +39,8 @@ public class ManageEmployee {
 
     public Integer addEmployee(String fname, String lname, int salary) {
         Session session = factory.openSession();
+//        Session session = factory.openSession(new EmployeeInterceptor());
+
         Transaction transaction = null;
         Integer empID = null;
         try {
@@ -72,11 +73,12 @@ public class ManageEmployee {
             List employees = session.createQuery("FROM EmployeeEntity ").list();
             for (Iterator iterator = employees.iterator(); iterator.hasNext(); ) {
                 EmployeeEntity employeeEntity = ((EmployeeEntity) iterator.next());
-                System.out.println("First name : " + employeeEntity.getFirstName());
-                System.out.println("Last  name : " + employeeEntity.getLastName());
-                System.out.println("Salary     : " + employeeEntity.getSalary());
-                System.out.println("ID    : " + employeeEntity.getId());
-                System.out.println("---------------------");
+                System.out.print(" ID         : " + employeeEntity.getId());
+                System.out.print(" First name : " + employeeEntity.getFirstName());
+                System.out.print(" Last  name : " + employeeEntity.getLastName());
+                System.out.print(" Salary     : " + employeeEntity.getSalary());
+
+                System.out.println();
             }
 
             transaction.commit();
@@ -93,14 +95,14 @@ public class ManageEmployee {
     }
 
 
-    public void updateEmp(Integer id, int salary) {
+    public void updateEmp(Integer empID, int salary) {
         Session session = factory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
 
             System.out.println("update ....");
-            EmployeeEntity employeeEntity = session.get(EmployeeEntity.class, id);
+            EmployeeEntity employeeEntity = session.get(EmployeeEntity.class, empID);
             employeeEntity.setSalary(salary);
             session.update(employeeEntity);
 
@@ -118,14 +120,14 @@ public class ManageEmployee {
         }
     }
 
-    public void delEmp(Integer id) {
+    public void delEmp(Integer empID) {
         Session session = factory.openSession();
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
-            updateEmp(id, 200);// 先更新
+            //updateEmp(id, 200);// 先更新
 
-            EmployeeEntity employeeEntity = session.get(EmployeeEntity.class, id);
+            EmployeeEntity employeeEntity = session.get(EmployeeEntity.class, empID);
             System.out.println("begin del..." +employeeEntity.getId());
             session.delete(employeeEntity);
 

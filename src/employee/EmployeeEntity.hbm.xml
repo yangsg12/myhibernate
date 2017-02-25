@@ -7,6 +7,7 @@
     <class name="employee.EmployeeEntity" table="employee" schema="test">
         <id name="id">
             <column name="id" sql-type="int(11)"/>
+            <generator class="native"></generator>
         </id>
         <property name="firstName">
             <column name="first_name" sql-type="varchar(20)" length="20" not-null="true"/>
